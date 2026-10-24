@@ -1,0 +1,6 @@
+{
+  "name": "PT LAUTAN INDAH Express - Monitoring Armada & Pengecekan Barang",
+  "description": "Sistem monitoring digital pengiriman barang, muat armada, pelacakan perjalanan, absensi sopir ber-watermark GPS, dan penerimaan barang PT LAUTAN INDAH Express.",
+  "requestFramePermissions": ["geolocation", "camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
