@@ -280,7 +280,7 @@ export default function DriverPortalPage() {
               <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
             </button>
             <Link
-              href="/track"
+              href="/"
               className="text-xs font-semibold bg-blue-600/20 text-blue-300 hover:bg-blue-600/30 px-2.5 py-1.5 rounded-lg border border-blue-500/30 transition"
             >
               Buka Map

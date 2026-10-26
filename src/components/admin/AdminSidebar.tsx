@@ -43,7 +43,7 @@ export default function AdminSidebar({ isOpen = true }: SidebarProps) {
       items: [
         { label: "Buat Pengiriman", href: "/admin/shipments/create", icon: PlusCircle },
         { label: "Daftar Pengiriman", href: "/admin/shipments", icon: Package },
-        { label: "Tracking Publik", href: "/track", icon: Navigation, external: false },
+        { label: "Tracking Publik", href: "/", icon: Navigation, external: false },
         { label: "Simulasi Driver", href: "/driver-portal", icon: Smartphone, external: false },
         { label: "Jadwal Pengiriman", href: "/admin/schedule", icon: Calendar },
       ],

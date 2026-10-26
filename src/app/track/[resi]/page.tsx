@@ -213,7 +213,7 @@ export default function ResiTrackingDetailPage() {
           </p>
           <div className="mt-6">
             <Link
-              href="/track"
+              href="/"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm transition"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -276,7 +276,7 @@ export default function ResiTrackingDetailPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link
-              href="/track"
+              href="/"
               className="p-2 -ml-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition"
               title="Kembali ke Pelacakan"
             >
