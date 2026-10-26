@@ -31,6 +31,7 @@ interface ShipmentRecord {
   destination_city: string;
   service_type: string;
   status: string;
+  driver_arrived?: boolean;
   shipped_date: string | Date;
   shipped_date_formatted?: string;
   estimated_days: string | null;
@@ -67,7 +68,12 @@ export default function ShipmentsListView({ initialShipments }: ShipmentsListVie
   const counts = useMemo(() => {
     return {
       all: initialShipments.length,
-      dalam_pengiriman: initialShipments.filter((s) => s.status === "dalam_pengiriman").length,
+      dalam_pengiriman: initialShipments.filter(
+        (s) => s.status === "dalam_pengiriman" && !s.driver_arrived
+      ).length,
+      sampai_tujuan: initialShipments.filter(
+        (s) => s.status === "dalam_pengiriman" && s.driver_arrived
+      ).length,
       terkirim: initialShipments.filter((s) => s.status === "terkirim").length,
       tertunda: initialShipments.filter((s) => s.status === "tertunda").length,
       dibatalkan: initialShipments.filter((s) => s.status === "dibatalkan").length,
@@ -80,7 +86,11 @@ export default function ShipmentsListView({ initialShipments }: ShipmentsListVie
     return initialShipments.filter((s) => {
       // Status Tab filter
       if (statusTab !== "all") {
-        if (statusTab === "kendala") {
+        if (statusTab === "sampai_tujuan") {
+          if (!s.driver_arrived || s.status !== "dalam_pengiriman") return false;
+        } else if (statusTab === "dalam_pengiriman") {
+          if (s.status !== "dalam_pengiriman" || s.driver_arrived) return false;
+        } else if (statusTab === "kendala") {
           if (s.status !== "kendala" && s.status !== "komplain") return false;
         } else if (s.status !== statusTab) {
           return false;
@@ -88,8 +98,14 @@ export default function ShipmentsListView({ initialShipments }: ShipmentsListVie
       }
 
       // Dropdown Status filter
-      if (filterStatus !== "all" && s.status !== filterStatus) {
-        return false;
+      if (filterStatus !== "all") {
+        if (filterStatus === "sampai_tujuan") {
+          if (!s.driver_arrived || s.status !== "dalam_pengiriman") return false;
+        } else if (filterStatus === "dalam_pengiriman") {
+          if (s.status !== "dalam_pengiriman" || s.driver_arrived) return false;
+        } else if (s.status !== filterStatus) {
+          return false;
+        }
       }
 
       // Service filter
@@ -199,12 +215,21 @@ export default function ShipmentsListView({ initialShipments }: ShipmentsListVie
     document.body.removeChild(link);
   };
 
-  const getStatusBadge = (status: string, hasIssue: boolean) => {
+  const getStatusBadge = (status: string, hasIssue: boolean, driverArrived?: boolean) => {
     if (hasIssue || status === "kendala" || status === "komplain") {
       return (
         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-red-50 text-red-700 border border-red-200">
           <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-ping"></span>
           {status === "komplain" ? "Komplain Penerima" : "Kendala Lapangan"}
+        </span>
+      );
+    }
+
+    if (driverArrived && status === "dalam_pengiriman") {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+          <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-ping"></span>
+          Sampai di Tujuan
         </span>
       );
     }
@@ -301,6 +326,7 @@ export default function ShipmentsListView({ initialShipments }: ShipmentsListVie
             >
               <option value="all">Pilih status (Semua)</option>
               <option value="dalam_pengiriman">Dalam Pengiriman</option>
+              <option value="sampai_tujuan">Sampai di Tujuan</option>
               <option value="terkirim">Terkirim</option>
               <option value="tertunda">Tertunda</option>
               <option value="kendala">Kendala</option>
@@ -383,6 +409,7 @@ export default function ShipmentsListView({ initialShipments }: ShipmentsListVie
           {[
             { id: "all", label: "Semua", count: counts.all },
             { id: "dalam_pengiriman", label: "Dalam Pengiriman", count: counts.dalam_pengiriman },
+            { id: "sampai_tujuan", label: "Sampai di Tujuan", count: counts.sampai_tujuan },
             { id: "terkirim", label: "Terkirim", count: counts.terkirim },
             { id: "tertunda", label: "Tertunda", count: counts.tertunda },
             { id: "dibatalkan", label: "Dibatalkan", count: counts.dibatalkan },
@@ -452,7 +479,6 @@ export default function ShipmentsListView({ initialShipments }: ShipmentsListVie
                 </th>
                 <th className="px-3 py-3">No. Resi</th>
                 <th className="px-3 py-3">Penerima & Tujuan</th>
-                <th className="px-3 py-3">Layanan</th>
                 <th className="px-3 py-3">Status</th>
                 <th className="px-3 py-3">Tgl Kirim / Estimasi</th>
                 <th className="px-3 py-3 text-right">Berat</th>
@@ -506,18 +532,7 @@ export default function ShipmentsListView({ initialShipments }: ShipmentsListVie
                       </div>
                     </td>
                     <td className="px-3 py-3 whitespace-nowrap">
-                      <span
-                        className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
-                          s.service_type === "Express"
-                            ? "bg-purple-50 text-purple-700 border border-purple-200"
-                            : "bg-slate-100 text-slate-700"
-                        }`}
-                      >
-                        {s.service_type}
-                      </span>
-                    </td>
-                    <td className="px-3 py-3 whitespace-nowrap">
-                      {getStatusBadge(s.status, s.has_active_issue)}
+                      {getStatusBadge(s.status, s.has_active_issue, s.driver_arrived)}
                     </td>
                     <td className="px-3 py-3 whitespace-nowrap">
                       <div className="font-medium text-slate-700">
