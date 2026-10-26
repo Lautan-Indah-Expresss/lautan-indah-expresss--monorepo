@@ -10,17 +10,9 @@ import {
   Package,
   Navigation,
   Smartphone,
-  Calendar,
   Users,
   Car,
   UserCheck,
-  Warehouse,
-  Receipt,
-  BadgeDollarSign,
-  FileText,
-  Settings,
-  Sparkles,
-  ChevronRight,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -28,10 +20,22 @@ interface SidebarProps {
   onClose?: () => void;
 }
 
+interface MenuItem {
+  label: string;
+  href: string;
+  icon: any;
+  external?: boolean;
+}
+
+interface MenuGroup {
+  title: string | null;
+  items: MenuItem[];
+}
+
 export default function AdminSidebar({ isOpen = true }: SidebarProps) {
   const pathname = usePathname();
 
-  const menuGroups = [
+  const menuGroups: MenuGroup[] = [
     {
       title: null,
       items: [
@@ -45,30 +49,14 @@ export default function AdminSidebar({ isOpen = true }: SidebarProps) {
         { label: "Daftar Pengiriman", href: "/admin/shipments", icon: Package },
         { label: "Tracking Publik", href: "/", icon: Navigation, external: false },
         { label: "Simulasi Driver", href: "/driver-portal", icon: Smartphone, external: false },
-        { label: "Jadwal Pengiriman", href: "/admin/schedule", icon: Calendar },
       ],
     },
     {
-      title: "MANAJEMEN",
+      title: "MANAJEMEN MASTER",
       items: [
         { label: "Pelanggan", href: "/admin/customers", icon: Users },
         { label: "Armada", href: "/admin/fleets", icon: Car },
         { label: "Kurir / Driver", href: "/admin/drivers", icon: UserCheck },
-        { label: "Gudang", href: "/admin/warehouses", icon: Warehouse },
-      ],
-    },
-    {
-      title: "KEUANGAN",
-      items: [
-        { label: "Tagihan (Invoicing)", href: "/admin/invoices", icon: Receipt },
-        { label: "Transaksi", href: "/admin/transactions", icon: BadgeDollarSign },
-      ],
-    },
-    {
-      title: "LAINNYA",
-      items: [
-        { label: "Laporan", href: "/admin/reports", icon: FileText },
-        { label: "Pengaturan", href: "/admin/settings", icon: Settings },
       ],
     },
   ];
@@ -94,39 +82,48 @@ export default function AdminSidebar({ isOpen = true }: SidebarProps) {
         </div>
       </div>
 
-      {/* Nav Menu */}
-      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
-        {menuGroups.map((group, gIdx) => (
-          <div key={gIdx} className="space-y-1">
+      {/* Navigation Links */}
+      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
+        {menuGroups.map((group, groupIdx) => (
+          <div key={groupIdx} className="space-y-1">
             {group.title && (
-              <p className="px-3 text-[10px] font-bold tracking-wider text-slate-500 uppercase mb-1">
+              <p className="px-3 text-[10px] font-bold tracking-wider text-slate-500 uppercase mb-2">
                 {group.title}
               </p>
             )}
             {group.items.map((item) => {
               const Icon = item.icon;
-              const isActive =
-                item.href === "/admin"
-                  ? pathname === "/admin"
-                  : pathname === item.href;
+              const isActive = pathname === item.href;
 
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                  target={item.external ? "_blank" : undefined}
+                  className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all group ${
                     isActive
-                      ? "bg-blue-600 text-white font-semibold shadow-sm shadow-blue-600/30"
-                      : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+                      ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30"
+                      : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/60"
                   }`}
                 >
-                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? "text-white" : "text-slate-400"}`} />
-                  <span className="truncate">{item.label}</span>
+                  <div className="flex items-center gap-3">
+                    <Icon
+                      className={`w-4 h-4 transition-colors ${
+                        isActive ? "text-white" : "text-slate-400 group-hover:text-slate-200"
+                      }`}
+                    />
+                    <span>{item.label}</span>
+                  </div>
                 </Link>
               );
             })}
           </div>
         ))}
+      </div>
+
+      {/* Bottom Info */}
+      <div className="p-3 border-t border-slate-800 text-[11px] text-slate-500 text-center">
+        LIE Cargo B2B Logistics v1.0
       </div>
     </aside>
   );
