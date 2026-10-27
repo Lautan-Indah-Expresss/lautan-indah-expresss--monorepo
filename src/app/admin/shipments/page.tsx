@@ -1,7 +1,7 @@
 import React from "react";
 import { db } from "@/db";
-import { shipments } from "@/db/schema";
-import { desc } from "drizzle-orm";
+import { shipments, shipment_checkpoints } from "@/db/schema";
+import { desc, eq } from "drizzle-orm";
 import ShipmentsListView from "@/components/admin/ShipmentsListView";
 
 // Fresh DB query on every request
@@ -17,6 +17,14 @@ function formatDateIndo(date: Date): string {
 export default async function ShipmentsPage() {
   const records = await db.select().from(shipments).orderBy(desc(shipments.created_at));
 
+  // Fetch arrival_driver checkpoints to detect shipments that arrived at destination but pending confirmation
+  const arrivalCheckpoints = await db
+    .select({ shipment_id: shipment_checkpoints.shipment_id })
+    .from(shipment_checkpoints)
+    .where(eq(shipment_checkpoints.checkpoint_type, "arrival_driver"));
+
+  const arrivedShipmentIds = new Set(arrivalCheckpoints.map((c) => c.shipment_id));
+
   // Map to serializable records
   const initialShipments = records.map((s) => ({
     id: s.id,
@@ -30,6 +38,7 @@ export default async function ShipmentsPage() {
     destination_city: s.destination_city,
     service_type: s.service_type,
     status: s.status,
+    driver_arrived: arrivedShipmentIds.has(s.id) && s.status === "dalam_pengiriman",
     shipped_date: s.shipped_date.toISOString(),
     shipped_date_formatted: formatDateIndo(s.shipped_date),
     estimated_days: s.estimated_days,

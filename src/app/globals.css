@@ -215,3 +215,30 @@
     margin: 1.2cm;
   }
 }
+
+/* Leaflet custom marker reset & pulse */
+.custom-leaflet-marker,
+.custom-leaflet-truck-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+@keyframes truckPulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.7);
+  }
+  70% {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 12px rgba(2, 132, 199, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(2, 132, 199, 0);
+  }
+}
+
+.truck-pulse-animation {
+  animation: truckPulse 2s infinite ease-in-out;
+}
+

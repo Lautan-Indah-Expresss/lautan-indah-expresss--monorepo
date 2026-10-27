@@ -283,7 +283,7 @@ export default async function AdminDashboardPage() {
               </Link>
 
               <Link
-                href="/track"
+                href="/"
                 className="flex items-center justify-between p-3.5 rounded-xl border border-slate-100 bg-slate-50/60 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 transition-all group"
               >
                 <div className="flex items-center gap-3">
