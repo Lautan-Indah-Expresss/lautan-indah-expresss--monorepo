@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Truck, ShieldCheck, Lock, User, ArrowRight, AlertCircle, Loader2 } from "lucide-react";
 
-export default function AdminLoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const fromUrl = searchParams.get("from") || "/admin";
@@ -54,7 +54,7 @@ export default function AdminLoginPage() {
             <Truck className="w-7 h-7" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900">KARGO</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">LIE Cargo</h1>
             <p className="text-xs font-semibold tracking-wider text-blue-600 uppercase">
               Smart Cargo Solutions
             </p>
@@ -146,5 +146,19 @@ export default function AdminLoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   );
 }
