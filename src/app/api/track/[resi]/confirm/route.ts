@@ -31,6 +31,21 @@ export async function POST(
       return NextResponse.json({ error: "Resi tidak ditemukan" }, { status: 404 });
     }
 
+    // Validasi: Supir harus sudah lapor tiba di tujuan (arrival_driver) terlebih dahulu
+    const [arrivalCheck] = await db
+      .select({ id: shipment_checkpoints.id })
+      .from(shipment_checkpoints)
+      .where(eq(shipment_checkpoints.shipment_id, shipment.id))
+      .where(eq(shipment_checkpoints.checkpoint_type, 'arrival_driver'))
+      .limit(1);
+
+    if (!arrivalCheck) {
+      return NextResponse.json(
+        { error: 'Armada supir belum sampai di lokasi tujuan. Konfirmasi penerimaan baru dapat dilakukan setelah armada tiba di tujuan.' },
+        { status: 400 }
+      );
+    }
+
     if (shipment.status === "terkirim") {
       return NextResponse.json(
         { error: "Pengiriman ini sudah dikonfirmasi selesai diterima sebelumnya" },

@@ -617,15 +617,27 @@ export default function ResiTrackingDetailPage() {
           </div>
 
           {/* TAB 1: KONFIRMASI DITERIMA */}
-          {actionTab === "confirm" && (
+          {actionTab === 'confirm' && (
             <div>
-              {shipment.status === "terkirim" ? (
-                <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-emerald-800 text-xs flex items-center gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+              {shipment.status === 'terkirim' ? (
+                <div className='bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-emerald-800 text-xs flex items-center gap-3'>
+                  <CheckCircle2 className='w-5 h-5 text-emerald-600 shrink-0' />
                   <div>
-                    <span className="font-bold block text-sm">Pengiriman Sudah Selesai Diterima</span>
+                    <span className='font-bold block text-sm'>Pengiriman Sudah Selesai Diterima</span>
                     <span>
                       Diterima oleh <strong>{shipment.received_by}</strong>. Data penerimaan sudah terkunci di sistem.
+                    </span>
+                  </div>
+                </div>
+              ) : !hasDriverArrived ? (
+                <div className='bg-amber-50 border border-amber-200 rounded-2xl p-5 text-amber-900 text-xs flex flex-col sm:flex-row items-start sm:items-center gap-4 shadow-sm'>
+                  <div className='w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0 border border-amber-300 text-amber-700 font-bold'>
+                    <Truck className='w-5 h-5 animate-bounce' />
+                  </div>
+                  <div>
+                    <span className='font-bold block text-sm text-amber-900'>Menunggu Armada Sampai di Lokasi Tujuan</span>
+                    <span className='text-amber-800/80 leading-relaxed block mt-0.5'>
+                      Supir sedang dalam perjalanan menuju gudang tujuan Anda. Tombol konfirmasi serah terima barang ini akan otomatis terbuka setelah supir melapor dan memotret gerbang kedatangan (Status: <strong>Armada Tiba di Tujuan</strong>).
                     </span>
                   </div>
                 </div>
