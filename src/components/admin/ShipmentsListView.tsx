@@ -435,11 +435,11 @@ export default function ShipmentsListView({ initialShipments }: ShipmentsListVie
 
       {/* Data Table */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-600">
+        <div className="w-full">
+          <table className="w-full text-left text-xs text-slate-600 table-auto">
             <thead className="bg-slate-50/80 border-b border-slate-100 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
               <tr>
-                <th className="px-4 py-3.5 w-10 text-center">
+                <th className="px-3 py-3 w-8 text-center">
                   <input
                     type="checkbox"
                     checked={
@@ -450,22 +450,19 @@ export default function ShipmentsListView({ initialShipments }: ShipmentsListVie
                     className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                   />
                 </th>
-                <th className="px-4 py-3.5">No. Resi</th>
-                <th className="px-4 py-3.5">Pengirim</th>
-                <th className="px-4 py-3.5">Penerima</th>
-                <th className="px-4 py-3.5">Tujuan</th>
-                <th className="px-4 py-3.5">Layanan</th>
-                <th className="px-4 py-3.5">Status</th>
-                <th className="px-4 py-3.5">Tanggal Kirim</th>
-                <th className="px-4 py-3.5">Estimasi Tiba</th>
-                <th className="px-4 py-3.5 text-right">Berat (kg)</th>
-                <th className="px-4 py-3.5 text-center">Aksi</th>
+                <th className="px-3 py-3">No. Resi</th>
+                <th className="px-3 py-3">Penerima & Tujuan</th>
+                <th className="px-3 py-3">Layanan</th>
+                <th className="px-3 py-3">Status</th>
+                <th className="px-3 py-3">Tgl Kirim / Estimasi</th>
+                <th className="px-3 py-3 text-right">Berat</th>
+                <th className="px-3 py-3 text-center">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {paginatedShipments.length === 0 ? (
                 <tr>
-                  <td colSpan={11} className="px-4 py-12 text-center text-slate-400">
+                  <td colSpan={8} className="px-4 py-12 text-center text-slate-400">
                     <Package className="w-8 h-8 mx-auto mb-2 text-slate-300" />
                     <p className="font-semibold text-sm text-slate-600">Tidak ada data pengiriman</p>
                     <p className="text-xs text-slate-400 mt-0.5">
@@ -481,7 +478,7 @@ export default function ShipmentsListView({ initialShipments }: ShipmentsListVie
                       selectedIds.includes(s.id) ? "bg-blue-50/30" : ""
                     }`}
                   >
-                    <td className="px-4 py-3.5 text-center">
+                    <td className="px-3 py-3 text-center">
                       <input
                         type="checkbox"
                         checked={selectedIds.includes(s.id)}
@@ -489,7 +486,7 @@ export default function ShipmentsListView({ initialShipments }: ShipmentsListVie
                         className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                       />
                     </td>
-                    <td className="px-4 py-3.5 font-bold font-mono text-slate-900">
+                    <td className="px-3 py-3 font-bold font-mono text-slate-900 whitespace-nowrap">
                       <Link
                         href={`/admin/shipments/${s.resi}/print`}
                         className="text-blue-600 hover:underline flex items-center gap-1.5"
@@ -498,19 +495,17 @@ export default function ShipmentsListView({ initialShipments }: ShipmentsListVie
                         <span>{s.resi}</span>
                       </Link>
                     </td>
-                    <td className="px-4 py-3.5 font-medium text-slate-800">
-                      <div>{s.sender_company}</div>
-                      <div className="text-[10px] text-slate-400">{s.sender_contact}</div>
+                    <td className="px-3 py-3">
+                      <div className="font-bold text-slate-900 leading-tight">
+                        {s.receiver_company}
+                      </div>
+                      <div className="text-[11px] text-slate-500 flex items-center gap-1 mt-0.5">
+                        <span className="font-semibold text-slate-700">{s.destination_city}</span>
+                        <span>•</span>
+                        <span className="text-slate-400">U.P: {s.receiver_contact}</span>
+                      </div>
                     </td>
-                    <td className="px-4 py-3.5 font-medium text-slate-800">
-                      <div>{s.receiver_company}</div>
-                      <div className="text-[10px] text-slate-400">{s.receiver_contact}</div>
-                    </td>
-                    <td className="px-4 py-3.5">
-                      <div className="font-semibold text-slate-700">{s.destination_city}</div>
-                      <div className="text-[10px] text-slate-400">Dari: {s.origin_city}</div>
-                    </td>
-                    <td className="px-4 py-3.5">
+                    <td className="px-3 py-3 whitespace-nowrap">
                       <span
                         className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
                           s.service_type === "Express"
@@ -521,18 +516,22 @@ export default function ShipmentsListView({ initialShipments }: ShipmentsListVie
                         {s.service_type}
                       </span>
                     </td>
-                    <td className="px-4 py-3.5">{getStatusBadge(s.status, s.has_active_issue)}</td>
-                    <td className="px-4 py-3.5 text-slate-500 font-medium">
-                      {s.shipped_date_formatted || String(s.shipped_date).slice(0, 10)}
+                    <td className="px-3 py-3 whitespace-nowrap">
+                      {getStatusBadge(s.status, s.has_active_issue)}
                     </td>
-                    <td className="px-4 py-3.5 text-slate-500 font-medium">
-                      {s.estimated_days || "3 hari kerja"}
+                    <td className="px-3 py-3 whitespace-nowrap">
+                      <div className="font-medium text-slate-700">
+                        {s.shipped_date_formatted || String(s.shipped_date).slice(0, 10)}
+                      </div>
+                      <div className="text-[10px] text-slate-400">
+                        Est: {s.estimated_days || "3 hari"}
+                      </div>
                     </td>
-                    <td className="px-4 py-3.5 text-right font-mono font-semibold text-slate-800">
-                      {Number(s.actual_weight_kg).toFixed(2)}
+                    <td className="px-3 py-3 text-right font-mono font-bold text-slate-800 whitespace-nowrap">
+                      {Number(s.actual_weight_kg).toFixed(1)} kg
                     </td>
-                    <td className="px-4 py-3.5 text-center">
-                      <div className="flex items-center justify-center gap-1.5">
+                    <td className="px-3 py-3 text-center whitespace-nowrap">
+                      <div className="flex items-center justify-center gap-1">
                         <Link
                           href={`/admin/shipments/${s.resi}/print`}
                           className="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"

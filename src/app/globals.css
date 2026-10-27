@@ -148,6 +148,28 @@
   background: rgba(100, 116, 139, 0.8);
 }
 
+/* Global slim modern scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
 /* Dark mode custom scrollbar for Sidebar and Navy menus */
 .custom-scrollbar-dark::-webkit-scrollbar {
   width: 5px;
