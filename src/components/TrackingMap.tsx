@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useEffect, useState } from "react";
 import "leaflet/dist/leaflet.css";
@@ -182,6 +182,9 @@ export default function TrackingMap({
       time: c.created_at,
     }));
 
+  // Cek apakah supir sudah tiba di tujuan
+  const isDriverArrived = validCheckpoints.some((c) => c.type === 'arrival_driver');
+
   // Find the index of the latest report from the driver
   // (departure_selfie, transit_update, incident, incident_resolved, arrival_driver)
   let latestDriverIndex = -1;
@@ -232,7 +235,7 @@ export default function TrackingMap({
           const isLatestDriverReport = idx === latestDriverIndex;
 
           let markerIcon = isIncident ? incidentIcon : checkIcon;
-          if (isLatestDriverReport) {
+          if (isLatestDriverReport && !isDriverArrived) {
             markerIcon = truckIcon;
           }
 
@@ -277,9 +280,15 @@ export default function TrackingMap({
         })}
 
         {/* Destination Marker */}
-        <Marker position={[destination.lat, destination.lng]} icon={destIcon}>
+        {/* Destination Marker with Truck Icon if Driver Arrived */}
+        <Marker position={[destination.lat, destination.lng]} icon={isDriverArrived ? truckIcon : destIcon} zIndexOffset={isDriverArrived ? 1100 : 0}>
           <Popup>
             <div className="text-xs space-y-1">
+              {isDriverArrived && (
+                <div className='flex items-center gap-1.5 bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded font-bold text-[10px] border border-emerald-200 mb-1'>
+                  <span>🚚 Armada Telah Tiba di Tujuan</span>
+                </div>
+              )}
               <strong className="text-emerald-700 block font-bold">TUJUAN: {destination.city}</strong>
               <p className="text-slate-600 text-[11px]">{destination.address || "Gudang Penerima"}</p>
             </div>
@@ -301,3 +310,4 @@ export default function TrackingMap({
     </div>
   );
 }
+

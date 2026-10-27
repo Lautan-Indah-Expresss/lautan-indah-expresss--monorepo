@@ -82,8 +82,9 @@ export async function POST(
       status_label: status_label || "Update Posisi Driver",
       description: description || null,
       photo_url: photo_url || null,
-      latitude: latitude ? String(latitude) : null,
-      longitude: longitude ? String(longitude) : null,
+      // Jika checkpoint tiba di tujuan (arrival_driver), kunci koordinat ke titik tujuan
+      latitude: (checkpoint_type === 'arrival_driver' && shipment.destination_lat) ? String(shipment.destination_lat) : (latitude ? String(latitude) : null),
+      longitude: (checkpoint_type === 'arrival_driver' && shipment.destination_lng) ? String(shipment.destination_lng) : (longitude ? String(longitude) : null),
       created_at: now,
     });
 
