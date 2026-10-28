@@ -149,12 +149,6 @@ export default function HomePage() {
 
           <div className="flex items-center gap-3">
             <Link
-              href="/driver-portal"
-              className="text-xs font-semibold text-slate-600 hover:text-blue-600 bg-slate-100 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition"
-            >
-              Simulasi Driver
-            </Link>
-            <Link
               href="/admin/login"
               className="text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 px-3.5 py-1.5 rounded-lg shadow-sm transition"
             >
