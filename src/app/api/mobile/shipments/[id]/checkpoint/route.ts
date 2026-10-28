@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { shipments, shipment_checkpoints } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and, ne } from "drizzle-orm";
 
 export async function POST(
   request: Request,
@@ -37,35 +37,93 @@ export async function POST(
 
     const now = new Date();
 
-    // 1. Determine shipment status mutation based on action
+    // Cek apakah aksi ini berlaku armada-wide (Multi-Drop)
+    // departure_selfie, transit_update, incident, incident_resolved berlaku untuk semua resi dalam trip yang belum terkirim DAN belum tiba di tujuan (driver_arrived == false)
+    const isFleetWideAction = [
+      "departure_selfie",
+      "transit_update",
+      "incident",
+      "incident_resolved",
+    ].includes(checkpoint_type);
+
+    let targetShipments = [shipment];
+
+    if (shipment.trip_code && isFleetWideAction) {
+      // Ambil seluruh shipment dalam trip yang status != 'terkirim'
+      const candidates = await db
+        .select()
+        .from(shipments)
+        .where(
+          and(
+            eq(shipments.trip_code, shipment.trip_code),
+            ne(shipments.status, "terkirim")
+          )
+        );
+
+      // Cek shipment mana saja yang SUDAH arrival_driver
+      const candidateIds = candidates.map((c) => c.id);
+      let arrivedIds = new Set<number>();
+      if (candidateIds.length > 0) {
+        const arrivalRecords = await db
+          .select({ shipment_id: shipment_checkpoints.shipment_id })
+          .from(shipment_checkpoints)
+          .where(eq(shipment_checkpoints.checkpoint_type, "arrival_driver"));
+        arrivedIds = new Set(arrivalRecords.map((r) => r.shipment_id));
+      }
+
+      // Untuk transit_update, incident, incident_resolved: HANYA targetkan shipment yang BELUM tiba di tujuan (masih on the road / di bak truk)
+      if (["transit_update", "incident", "incident_resolved"].includes(checkpoint_type)) {
+        targetShipments = candidates.filter((c) => !arrivedIds.has(c.id));
+      } else {
+        // departure_selfie menargetkan yang masih tertunda
+        targetShipments = candidates;
+      }
+
+      if (targetShipments.length === 0) {
+        targetShipments = [shipment];
+      }
+    }
+
+    // 1. Mutasi status shipment
     if (checkpoint_type === "departure_selfie") {
-      await db
-        .update(shipments)
-        .set({
-          status: "dalam_pengiriman",
-          has_active_issue: false,
-        })
-        .where(eq(shipments.id, shipmentId));
+      for (const s of targetShipments) {
+        if (s.status === "tertunda") {
+          await db
+            .update(shipments)
+            .set({
+              status: "dalam_pengiriman",
+              has_active_issue: false,
+            })
+            .where(eq(shipments.id, s.id));
+        }
+      }
     } else if (checkpoint_type === "incident") {
-      await db
-        .update(shipments)
-        .set({
-          status: "kendala",
-          has_active_issue: true,
-          current_issue_note: description ? `[Kendala Driver] ${description.slice(0, 150)}` : "Kendala di jalan",
-        })
-        .where(eq(shipments.id, shipmentId));
+      const issueNote = description
+        ? `[Kendala Driver] ${description.slice(0, 150)}`
+        : "Kendala di jalan";
+      for (const s of targetShipments) {
+        await db
+          .update(shipments)
+          .set({
+            status: "kendala",
+            has_active_issue: true,
+            current_issue_note: issueNote,
+          })
+          .where(eq(shipments.id, s.id));
+      }
     } else if (checkpoint_type === "incident_resolved") {
-      await db
-        .update(shipments)
-        .set({
-          status: "dalam_pengiriman",
-          has_active_issue: false,
-          current_issue_note: null,
-        })
-        .where(eq(shipments.id, shipmentId));
+      for (const s of targetShipments) {
+        await db
+          .update(shipments)
+          .set({
+            status: "dalam_pengiriman",
+            has_active_issue: false,
+            current_issue_note: null,
+          })
+          .where(eq(shipments.id, s.id));
+      }
     } else if (checkpoint_type === "arrival_driver") {
-      // Driver arrived at recipient location
+      // Driver tiba di lokasi penerima (spesifik per resi)
       await db
         .update(shipments)
         .set({
@@ -75,25 +133,33 @@ export async function POST(
     }
 
     // 2. Insert into shipment_checkpoints table
-    const [inserted] = await db.insert(shipment_checkpoints).values({
-      shipment_id: shipmentId,
-      actor_role: "driver",
-      checkpoint_type: checkpoint_type || "transit_update",
-      status_label: status_label || "Update Posisi Driver",
-      description: description || null,
-      photo_url: photo_url || null,
-      latitude: latitude ? String(latitude) : null,
-      longitude: longitude ? String(longitude) : null,
-      created_at: now,
-    });
+    let lastInsertedId = 0;
+    const checkpointTargets =
+      isFleetWideAction && shipment.trip_code ? targetShipments : [{ id: shipmentId }];
+
+    for (const target of checkpointTargets) {
+      const [inserted] = await db.insert(shipment_checkpoints).values({
+        shipment_id: target.id,
+        actor_role: "driver",
+        checkpoint_type: checkpoint_type || "transit_update",
+        status_label: status_label || "Update Posisi Driver",
+        description: description || null,
+        photo_url: photo_url || null,
+        latitude: latitude ? String(latitude) : null,
+        longitude: longitude ? String(longitude) : null,
+        created_at: now,
+      });
+      lastInsertedId = inserted.insertId;
+    }
 
     return NextResponse.json({
       success: true,
       message: "Checkpoint berhasil dicatat",
       data: {
-        id: inserted.insertId,
+        id: lastInsertedId,
         checkpoint_type,
         status_label,
+        affected_count: checkpointTargets.length,
       },
     });
   } catch (error) {

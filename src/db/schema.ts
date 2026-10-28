@@ -59,6 +59,10 @@ export const shipments = mysqlTable("shipments", {
   reference_po: varchar("reference_po", { length: 100 }),
   pin_code: varchar("pin_code", { length: 6 }).notNull(),
 
+  // Multi-Drop Trip Clustering
+  trip_code: varchar("trip_code", { length: 50 }),
+  drop_sequence: int("drop_sequence").default(1).notNull(),
+
   // Foreign Keys
   sender_customer_id: bigint("sender_customer_id", { mode: "number", unsigned: true }).references(
     () => customers.id

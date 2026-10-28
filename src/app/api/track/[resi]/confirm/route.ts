@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { shipments, shipment_checkpoints } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 export async function POST(
   request: Request,
@@ -35,8 +35,12 @@ export async function POST(
     const [arrivalCheck] = await db
       .select({ id: shipment_checkpoints.id })
       .from(shipment_checkpoints)
-      .where(eq(shipment_checkpoints.shipment_id, shipment.id))
-      .where(eq(shipment_checkpoints.checkpoint_type, 'arrival_driver'))
+      .where(
+        and(
+          eq(shipment_checkpoints.shipment_id, shipment.id),
+          eq(shipment_checkpoints.checkpoint_type, 'arrival_driver')
+        )
+      )
       .limit(1);
 
     if (!arrivalCheck) {

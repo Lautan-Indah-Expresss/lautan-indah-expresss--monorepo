@@ -37,6 +37,8 @@ export async function GET(request: Request) {
         vehicle_name: fleets.vehicle_name,
         driver_id: shipments.driver_id,
         driver_name: users.name,
+        trip_code: shipments.trip_code,
+        drop_sequence: shipments.drop_sequence,
       })
       .from(shipments)
       .leftJoin(fleets, eq(shipments.fleet_id, fleets.id))
