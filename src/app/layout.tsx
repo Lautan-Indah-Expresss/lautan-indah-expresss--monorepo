@@ -9,9 +9,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "LIE Cargo - Monitoring Armada & Pengecekan Barang",
+  title: "PT LAUTAN INDAH Express - Monitoring Armada & Pengecekan Barang",
   description:
-    "Sistem monitoring digital pengiriman barang, muat armada, pelacakan perjalanan, absensi sopir ber-watermark GPS, dan penerimaan barang LIE Cargo.",
+    "Sistem monitoring digital pengiriman barang, muat armada, pelacakan perjalanan, absensi sopir ber-watermark GPS, dan penerimaan barang PT LAUTAN INDAH Express.",
   icons: {
     icon: "/favicon.ico",
   },
