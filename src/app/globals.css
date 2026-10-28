@@ -148,6 +148,28 @@
   background: rgba(100, 116, 139, 0.8);
 }
 
+/* Global slim modern scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
 /* Dark mode custom scrollbar for Sidebar and Navy menus */
 .custom-scrollbar-dark::-webkit-scrollbar {
   width: 5px;
@@ -193,3 +215,30 @@
     margin: 1.2cm;
   }
 }
+
+/* Leaflet custom marker reset & pulse */
+.custom-leaflet-marker,
+.custom-leaflet-truck-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+@keyframes truckPulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.7);
+  }
+  70% {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 12px rgba(2, 132, 199, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(2, 132, 199, 0);
+  }
+}
+
+.truck-pulse-animation {
+  animation: truckPulse 2s infinite ease-in-out;
+}
+
