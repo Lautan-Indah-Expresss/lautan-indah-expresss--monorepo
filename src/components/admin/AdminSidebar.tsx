@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   PlusCircle,
   Package,
+  Layers,
   Navigation,
   Users,
   Car,
@@ -46,6 +47,7 @@ export default function AdminSidebar({ isOpen = true }: SidebarProps) {
       items: [
         { label: "Buat Pengiriman", href: "/admin/shipments/create", icon: PlusCircle },
         { label: "Daftar Pengiriman", href: "/admin/shipments", icon: Package },
+        { label: "Dispatcher Multi-Drop", href: "/admin/multidrop", icon: Layers },
         { label: "Tracking Publik", href: "/", icon: Navigation, external: false },
       ],
     },
