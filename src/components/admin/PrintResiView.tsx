@@ -1,5 +1,7 @@
 "use client";
 
+import { TypographyLogo } from "@/components/TypographyLogo";
+
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -130,17 +132,13 @@ export default function PrintResiView({ shipment }: { shipment: ShipmentPrintDat
         <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-slate-900 pb-5 gap-4">
           {/* Logo & Tagline */}
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white print:border print:border-slate-800">
-              <Truck className="w-7 h-7" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-2xl font-black tracking-wider text-slate-900">LIE CARGO</span>
-              </div>
-              <p className="text-[11px] font-semibold text-blue-600 tracking-wide uppercase">
-                Smart Cargo Solutions
-              </p>
-            </div>
+            <TypographyLogo
+              variant="cargo"
+              theme="light"
+              style="velocity"
+              size="lg"
+              subtitle="PT LAUTAN INDAH EXPRESS"
+            />
           </div>
 
           {/* Resi Center Info */}
