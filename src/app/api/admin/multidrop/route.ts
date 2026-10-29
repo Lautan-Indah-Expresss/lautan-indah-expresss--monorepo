@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { shipments, fleets, users } from "@/db/schema";
-import { eq, and, inArray, isNull, desc } from "drizzle-orm";
+import { eq, and, inArray, isNull, desc, ne } from "drizzle-orm";
 
 // 1. GET: Ambil data resi yang belum diberangkatkan (status: 'tertunda') untuk perencanaan Multi-Drop
 export async function GET() {
@@ -42,16 +42,17 @@ export async function GET() {
       .from(users)
       .where(and(eq(users.role, "driver"), eq(users.is_active, true)));
 
-    // Ambil daftar armada aktif
+    // Ambil daftar armada aktif (tidak dikunci hanya 'available' agar supir bisa menggabungkan tugas)
     const activeFleets = await db
       .select({
         id: fleets.id,
         nopol: fleets.nopol,
         vehicle_name: fleets.vehicle_name,
         default_driver_id: fleets.default_driver_id,
+        status: fleets.status,
       })
       .from(fleets)
-      .where(eq(fleets.status, "available"));
+      .where(ne(fleets.status, "maintenance"));
 
     return NextResponse.json({
       success: true,

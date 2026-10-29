@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
-import { shipments, shipment_checkpoints } from "@/db/schema";
+import { shipments, shipment_checkpoints, fleets } from "@/db/schema";
 import { eq, and, ne } from "drizzle-orm";
 
 export async function POST(
@@ -84,7 +84,7 @@ export async function POST(
       }
     }
 
-    // 1. Mutasi status shipment
+    // 1. Mutasi status shipment & sinkronisasi status armada (fleets)
     if (checkpoint_type === "departure_selfie") {
       for (const s of targetShipments) {
         if (s.status === "tertunda") {
@@ -96,6 +96,13 @@ export async function POST(
             })
             .where(eq(shipments.id, s.id));
         }
+      }
+      // Update status armada menjadi on_trip
+      if (shipment.fleet_id) {
+        await db
+          .update(fleets)
+          .set({ status: "on_trip" })
+          .where(eq(fleets.id, shipment.fleet_id));
       }
     } else if (checkpoint_type === "incident") {
       const issueNote = description
@@ -111,6 +118,13 @@ export async function POST(
           })
           .where(eq(shipments.id, s.id));
       }
+      // Update status armada menjadi trouble jika ada kendala
+      if (shipment.fleet_id) {
+        await db
+          .update(fleets)
+          .set({ status: "trouble" })
+          .where(eq(fleets.id, shipment.fleet_id));
+      }
     } else if (checkpoint_type === "incident_resolved") {
       for (const s of targetShipments) {
         await db
@@ -121,6 +135,13 @@ export async function POST(
             current_issue_note: null,
           })
           .where(eq(shipments.id, s.id));
+      }
+      // Kendala selesai -> armada kembali on_trip
+      if (shipment.fleet_id) {
+        await db
+          .update(fleets)
+          .set({ status: "on_trip" })
+          .where(eq(fleets.id, shipment.fleet_id));
       }
     } else if (checkpoint_type === "arrival_driver") {
       // Driver tiba di lokasi penerima (spesifik per resi)

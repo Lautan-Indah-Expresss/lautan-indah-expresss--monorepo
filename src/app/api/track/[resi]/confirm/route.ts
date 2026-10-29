@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
-import { shipments, shipment_checkpoints } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
+import { shipments, shipment_checkpoints, fleets } from "@/db/schema";
+import { eq, and, ne } from "drizzle-orm";
 
 export async function POST(
   request: Request,
@@ -22,6 +22,7 @@ export async function POST(
         receiver_phone: shipments.receiver_phone,
         status: shipments.status,
         receiver_company: shipments.receiver_company,
+        fleet_id: shipments.fleet_id,
       })
       .from(shipments)
       .where(eq(shipments.resi, cleanResi))
@@ -96,6 +97,29 @@ export async function POST(
         has_active_issue: false,
       })
       .where(eq(shipments.id, shipment.id));
+
+    // 1.1 Cek apakah armada masih memiliki resi aktif lain yang belum 'terkirim'
+    if (shipment.fleet_id) {
+      const activeRemaining = await db
+        .select({ id: shipments.id })
+        .from(shipments)
+        .where(
+          and(
+            eq(shipments.fleet_id, shipment.fleet_id),
+            ne(shipments.id, shipment.id),
+            ne(shipments.status, "terkirim")
+          )
+        )
+        .limit(1);
+
+      // Jika seluruh muatan di truk ini sudah selesai (terkirim semua), kembalikan status armada jadi 'available'
+      if (activeRemaining.length === 0) {
+        await db
+          .update(fleets)
+          .set({ status: "available" })
+          .where(eq(fleets.id, shipment.fleet_id));
+      }
+    }
 
     // 2. Insert checkpoint
     await db.insert(shipment_checkpoints).values({

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
-import { fleets, users } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { fleets, users, shipments } from "@/db/schema";
+import { eq, desc, ne, and } from "drizzle-orm";
 
 export async function GET() {
   try {
@@ -20,7 +20,35 @@ export async function GET() {
       .leftJoin(users, eq(fleets.default_driver_id, users.id))
       .orderBy(desc(fleets.created_at));
 
-    return NextResponse.json({ success: true, data: records });
+    // Ambil seluruh resi yang aktif (belum terkirim) untuk tiap armada
+    const activeShipments = await db
+      .select({
+        id: shipments.id,
+        resi: shipments.resi,
+        status: shipments.status,
+        origin_city: shipments.origin_city,
+        destination_city: shipments.destination_city,
+        receiver_company: shipments.receiver_company,
+        total_colli: shipments.total_colli,
+        trip_code: shipments.trip_code,
+        drop_sequence: shipments.drop_sequence,
+        fleet_id: shipments.fleet_id,
+        driver_id: shipments.driver_id,
+      })
+      .from(shipments)
+      .where(ne(shipments.status, "terkirim"));
+
+    // Petakan resi aktif ke masing-masing armada
+    const enrichedRecords = records.map((f) => {
+      const fleetShipments = activeShipments.filter((s) => s.fleet_id === f.id);
+      return {
+        ...f,
+        active_shipments_count: fleetShipments.length,
+        active_shipments: fleetShipments,
+      };
+    });
+
+    return NextResponse.json({ success: true, data: enrichedRecords });
   } catch (error) {
     console.error("GET /api/fleets error:", error);
     return NextResponse.json(
