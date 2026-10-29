@@ -17,6 +17,9 @@ import {
   ChevronLeft,
   ChevronRight,
   ExternalLink,
+  CheckCircle2,
+  X,
+  FileCheck2,
 } from "lucide-react";
 
 interface ShipmentRecord {
@@ -38,6 +41,11 @@ interface ShipmentRecord {
   actual_weight_kg: string;
   total_cost: string;
   has_active_issue: boolean;
+  received_by?: string | null;
+  received_date?: string | null;
+  proof_photo_confirm?: string | null;
+  proof_photo_driver?: string | null;
+  proof_notes?: string | null;
 }
 
 interface ShipmentsListViewProps {
@@ -57,6 +65,9 @@ export default function ShipmentsListView({ initialShipments }: ShipmentsListVie
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
+
+  // State Modal Bukti Penerimaan (POD)
+  const [selectedProofShipment, setSelectedProofShipment] = useState<ShipmentRecord | null>(null);
 
   // Extract unique destination cities for dropdown
   const uniqueCities = useMemo(() => {
@@ -547,6 +558,16 @@ export default function ShipmentsListView({ initialShipments }: ShipmentsListVie
                     </td>
                     <td className="px-3 py-3 text-center whitespace-nowrap">
                       <div className="flex items-center justify-center gap-1">
+                        {s.status === "terkirim" && (
+                          <button
+                            type="button"
+                            onClick={() => setSelectedProofShipment(s)}
+                            className="p-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors"
+                            title="Lihat Bukti Penerimaan (POD)"
+                          >
+                            <FileCheck2 className="w-4 h-4" />
+                          </button>
+                        )}
                         <Link
                           href={`/admin/shipments/${s.resi}/print`}
                           className="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
@@ -623,6 +644,126 @@ export default function ShipmentsListView({ initialShipments }: ShipmentsListVie
           </div>
         </div>
       </div>
+
+      {/* Modal Detail Bukti Penerimaan (POD) */}
+      {selectedProofShipment && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
+            {/* Modal Header */}
+            <div className="p-4 bg-slate-900 text-white flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <FileCheck2 className="w-5 h-5 text-emerald-400" />
+                <div>
+                  <h3 className="text-sm font-bold text-white">
+                    Bukti Serah Terima Barang (POD)
+                  </h3>
+                  <span className="text-[11px] font-mono text-slate-400">
+                    Resi: {selectedProofShipment.resi}
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedProofShipment(null)}
+                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-5 overflow-y-auto space-y-4 text-xs">
+              {/* Info Penerima */}
+              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5 space-y-1.5 text-emerald-950">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span className="font-bold text-sm">Status: Terkirim Sukses</span>
+                </div>
+                <p className="text-slate-700">
+                  Diterima oleh: <strong>{selectedProofShipment.received_by || selectedProofShipment.receiver_contact}</strong>
+                </p>
+                <p className="text-slate-500 text-[11px]">
+                  Tujuan: {selectedProofShipment.receiver_company} ({selectedProofShipment.destination_city})
+                </p>
+                {selectedProofShipment.proof_notes && (
+                  <p className="text-slate-600 bg-white/80 p-2 rounded-lg border border-emerald-100 text-[11px] mt-1">
+                    Catatan: &ldquo;{selectedProofShipment.proof_notes}&rdquo;
+                  </p>
+                )}
+              </div>
+
+              {/* Foto Bukti */}
+              <div className="space-y-3">
+                <span className="font-bold text-slate-700 block uppercase tracking-wider text-[11px]">
+                  Dokumentasi Foto Lapangan:
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {/* Foto Gerbang Tiba Sopir */}
+                  <div className="border border-slate-200 rounded-xl p-2.5 bg-slate-50">
+                    <span className="font-bold text-slate-600 text-[10px] block mb-1.5">
+                      1. Foto Gerbang Tiba (Sopir)
+                    </span>
+                    {selectedProofShipment.proof_photo_driver ? (
+                      <a
+                        href={selectedProofShipment.proof_photo_driver}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="block rounded-lg overflow-hidden border border-slate-200 hover:opacity-90"
+                      >
+                        <img
+                          src={selectedProofShipment.proof_photo_driver}
+                          alt="Foto Gerbang Tiba"
+                          className="w-full h-32 object-cover"
+                        />
+                      </a>
+                    ) : (
+                      <div className="h-32 rounded-lg bg-slate-200/60 border border-slate-200 flex items-center justify-center text-slate-400 text-[11px]">
+                        Tidak ada foto
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Foto Serah Terima Fisik Barang */}
+                  <div className="border border-slate-200 rounded-xl p-2.5 bg-slate-50">
+                    <span className="font-bold text-slate-600 text-[10px] block mb-1.5">
+                      2. Foto Barang Diterima (Penerima)
+                    </span>
+                    {selectedProofShipment.proof_photo_confirm ? (
+                      <a
+                        href={selectedProofShipment.proof_photo_confirm}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="block rounded-lg overflow-hidden border border-slate-200 hover:opacity-90"
+                      >
+                        <img
+                          src={selectedProofShipment.proof_photo_confirm}
+                          alt="Foto Serah Terima"
+                          className="w-full h-32 object-cover"
+                        />
+                      </a>
+                    ) : (
+                      <div className="h-32 rounded-lg bg-slate-200/60 border border-slate-200 flex items-center justify-center text-slate-400 text-[11px]">
+                        Tidak ada foto
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-end">
+              <button
+                type="button"
+                onClick={() => setSelectedProofShipment(null)}
+                className="px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-slate-800 transition"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
