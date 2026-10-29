@@ -13,6 +13,7 @@ import {
   Users,
   Car,
   UserCheck,
+  History,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -47,6 +48,7 @@ export default function AdminSidebar({ isOpen = true }: SidebarProps) {
       items: [
         { label: "Buat Pengiriman", href: "/admin/shipments/create", icon: PlusCircle },
         { label: "Daftar Pengiriman", href: "/admin/shipments", icon: Package },
+        { label: "Histori Pengiriman", href: "/admin/history", icon: History },
         { label: "Dispatcher Multi-Drop", href: "/admin/multidrop", icon: Layers },
         { label: "Tracking Publik", href: "/", icon: Navigation, external: false },
       ],
