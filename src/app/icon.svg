@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0B132B" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+    <linearGradient id="lieGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#2563EB" />
+    </linearGradient>
+  </defs>
+  <!-- Background rounded squircle tile -->
+  <rect width="128" height="128" rx="28" fill="url(#bgGrad)" />
+  <rect x="2" y="2" width="124" height="124" rx="26" fill="none" stroke="#1E293B" stroke-width="2" />
+  
+  <!-- Pure typography LIE -->
+  <text x="64" y="80" 
+        font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif" 
+        font-size="52" 
+        font-weight="900" 
+        font-style="italic" 
+        letter-spacing="-1" 
+        text-anchor="middle" 
+        fill="url(#lieGrad)">LIE</text>
+  
+  <!-- Velocity micro accent dash -->
+  <rect x="34" y="92" width="60" height="4.5" rx="2.25" fill="#38BDF8" opacity="0.9" />
+</svg>
