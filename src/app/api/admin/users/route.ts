@@ -37,8 +37,7 @@ export async function GET() {
       .where(
         or(
           eq(users.role, "spradmexp"),
-          eq(users.role, "admexp"),
-          eq(users.role, "admin")
+          eq(users.role, "admexp")
         )
       )
       .orderBy(desc(users.created_at));

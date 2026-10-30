@@ -18,7 +18,7 @@ export interface AuthPayload {
   userId: number;
   name: string;
   username: string;
-  role: "spradmexp" | "admexp" | "admin" | "driver";
+  role: "spradmexp" | "admexp" | "driver";
 }
 
 /**

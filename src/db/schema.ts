@@ -19,7 +19,7 @@ export const users = mysqlTable("users", {
   username: varchar("username", { length: 50 }).notNull().unique(),
   password_hash: varchar("password_hash", { length: 255 }).notNull(),
   phone: varchar("phone", { length: 30 }).notNull(),
-  role: mysqlEnum("role", ["spradmexp", "admexp", "admin", "driver"]).default("driver").notNull(),
+  role: mysqlEnum("role", ["spradmexp", "admexp", "driver"]).default("driver").notNull(),
   is_active: boolean("is_active").default(true).notNull(),
   created_at: timestamp("created_at").defaultNow().notNull(),
 });

@@ -24,7 +24,7 @@ interface AdminUser {
   name: string;
   username: string;
   phone: string;
-  role: "spradmexp" | "admexp" | "admin" | "driver";
+  role: "spradmexp" | "admexp" | "driver";
   is_active: boolean;
   created_at: string;
 }
