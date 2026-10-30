@@ -25,6 +25,7 @@ interface MenuItem {
   label: string;
   href: string;
   icon: any;
+  target?: string;
   external?: boolean;
 }
 
@@ -50,7 +51,7 @@ export default function AdminSidebar({ isOpen = true }: SidebarProps) {
         { label: "Daftar Pengiriman", href: "/admin/shipments", icon: Package },
         { label: "Histori Pengiriman", href: "/admin/history", icon: History },
         { label: "Dispatcher Multi-Drop", href: "/admin/multidrop", icon: Layers },
-        { label: "Tracking Publik", href: "/", icon: Navigation, external: false },
+        { label: "Tracking Publik", href: "/", target:"_blank", icon: Navigation,  external: false },
       ],
     },
     {
@@ -101,7 +102,7 @@ export default function AdminSidebar({ isOpen = true }: SidebarProps) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  target={item.external ? "_blank" : undefined}
+                  target={item.target ?? (item.external ? "_blank" : undefined)}
                   className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all group ${
                     isActive
                       ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30"
@@ -125,7 +126,7 @@ export default function AdminSidebar({ isOpen = true }: SidebarProps) {
 
       {/* Bottom Info */}
       <div className="p-3 border-t border-slate-800 text-[11px] text-slate-500 text-center">
-        LIE Cargo B2B Logistics v1.0
+        LIE Cargo B2B Logistics 
       </div>
     </aside>
   );

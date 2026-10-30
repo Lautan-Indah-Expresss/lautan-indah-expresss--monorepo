@@ -147,14 +147,14 @@ export default function HomePage() {
             </div>
           </Link>
 
-          <div className="flex items-center gap-3">
+          {/* <div className="flex items-center gap-3">
             <Link
               href="/admin/login"
               className="text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 px-3.5 py-1.5 rounded-lg shadow-sm transition"
             >
               Login Admin
             </Link>
-          </div>
+          </div> */}
         </div>
       </header>
 
@@ -201,7 +201,7 @@ export default function HomePage() {
           </form>
 
           {/* Demo Resi Helper */}
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs text-slate-500">
+          {/* <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs text-slate-500">
             <span>Contoh Resi Demo:</span>
             {sampleResis.map((item) => (
               <button
@@ -216,7 +216,7 @@ export default function HomePage() {
                 {item.label}
               </button>
             ))}
-          </div>
+          </div> */}
 
           {/* Feature Highlights */}
           <div className="mt-14 grid grid-cols-1 sm:grid-cols-3 gap-4 text-left">

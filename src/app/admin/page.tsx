@@ -301,7 +301,7 @@ export default async function AdminDashboardPage() {
                 <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-600" />
               </Link>
 
-              <Link
+              {/* <Link
                 href="/admin/schedule"
                 className="flex items-center justify-between p-3.5 rounded-xl border border-slate-100 bg-slate-50/60 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 transition-all group"
               >
@@ -317,7 +317,7 @@ export default async function AdminDashboardPage() {
                   </div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-600" />
-              </Link>
+              </Link> */}
 
               <Link
                 href="/admin/history"
@@ -339,12 +339,12 @@ export default async function AdminDashboardPage() {
             </div>
           </div>
 
-          <div className="mt-5 p-3.5 bg-blue-50/60 rounded-xl border border-blue-100 text-xs text-blue-900">
+          {/* <div className="mt-5 p-3.5 bg-blue-50/60 rounded-xl border border-blue-100 text-xs text-blue-900">
             <span className="font-bold block mb-1">Status MySQL Laragon</span>
             <span className="text-[11px] text-slate-600 block">
               Terkoneksi ke database <code className="font-mono bg-blue-100 px-1 py-0.5 rounded">lie-db</code> (6 tabel aktif).
             </span>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
