@@ -227,10 +227,6 @@ export default function PrintResiView({ shipment }: { shipment: ShipmentPrintDat
               </span>
             </div>
             <div className="flex justify-between py-0.5 border-b border-slate-200/60">
-              <span className="text-slate-500">Pembayaran:</span>
-              <span className="font-bold text-emerald-700">{shipment.payment_method}</span>
-            </div>
-            <div className="flex justify-between py-0.5 border-b border-slate-200/60">
               <span className="text-slate-500">Asuransi:</span>
               <span className="font-semibold text-slate-800">
                 {shipment.has_insurance ? "Ya (Tercakup)" : "Tidak"}
@@ -292,7 +288,7 @@ export default function PrintResiView({ shipment }: { shipment: ShipmentPrintDat
                       <th className="px-3 py-2">Nama Barang</th>
                       <th className="px-3 py-2 text-center">Qty</th>
                       <th className="px-3 py-2 text-right">Berat (kg)</th>
-                      <th className="px-3 py-2 text-right">Nilai Barang</th>
+                      
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
@@ -307,9 +303,7 @@ export default function PrintResiView({ shipment }: { shipment: ShipmentPrintDat
                           <td className="px-3 py-2 text-right font-mono">
                             {Number(item.weight_kg).toFixed(2)}
                           </td>
-                          <td className="px-3 py-2 text-right font-mono font-medium">
-                            {formatRupiah(item.item_value)}
-                          </td>
+
                         </tr>
                       ))
                     ) : (
@@ -322,9 +316,7 @@ export default function PrintResiView({ shipment }: { shipment: ShipmentPrintDat
                         <td className="px-3 py-2 text-right font-mono">
                           {shipment.actual_weight_kg}
                         </td>
-                        <td className="px-3 py-2 text-right font-mono font-medium">
-                          {formatRupiah(2500000)}
-                        </td>
+
                       </tr>
                     )}
                   </tbody>
@@ -343,40 +335,17 @@ export default function PrintResiView({ shipment }: { shipment: ShipmentPrintDat
             </div>
           </div>
 
-          {/* Right 1/3: Rincian Biaya Pengiriman */}
+          {/* Right 1/3: Ketentuan & Jaminan Pengiriman */}
           <div className="space-y-4">
-            <div>
-              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-2">
-                BIAYA PENGIRIMAN
+            <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-2">
+              <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 block mb-1">
+                KETENTUAN PENGIRIMAN
               </span>
-              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2 text-xs">
-                <div className="flex justify-between text-slate-600">
-                  <span>Ongkos Kirim:</span>
-                  <span className="font-mono font-semibold">
-                    {formatRupiah(shipment.shipping_cost)}
-                  </span>
-                </div>
-                <div className="flex justify-between text-slate-600">
-                  <span>Biaya Asuransi:</span>
-                  <span className="font-mono font-semibold">
-                    {formatRupiah(shipment.insurance_cost)}
-                  </span>
-                </div>
-                {Number(shipment.other_cost) > 0 && (
-                  <div className="flex justify-between text-slate-600">
-                    <span>Biaya Lainnya:</span>
-                    <span className="font-mono font-semibold">
-                      {formatRupiah(shipment.other_cost)}
-                    </span>
-                  </div>
-                )}
-                <div className="pt-2 border-t border-slate-300 flex justify-between items-baseline">
-                  <span className="font-bold text-slate-900 text-sm">TOTAL BIAYA:</span>
-                  <span className="font-black text-blue-700 text-base font-mono">
-                    {formatRupiah(shipment.total_cost)}
-                  </span>
-                </div>
-              </div>
+              <ul className="list-disc list-inside space-y-1 text-slate-600 text-[11px] leading-relaxed">
+                <li>Resi ini merupakan bukti sah penyerahan dan penerimaan barang muatan.</li>
+                <li>Pengemudi wajib mematuhi standar operasional prosedur pengiriman.</li>
+                <li>Pemeriksaan fisik barang dilakukan bersama saat serah terima di tujuan.</li>
+              </ul>
             </div>
 
             <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-[11px] text-emerald-800">

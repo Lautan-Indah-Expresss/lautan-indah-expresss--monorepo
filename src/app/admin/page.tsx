@@ -15,6 +15,7 @@ import {
   Navigation,
   Calendar,
   Receipt,
+  History as HistoryIcon,
   Eye,
   ChevronRight,
   AlertTriangle,
@@ -319,18 +320,18 @@ export default async function AdminDashboardPage() {
               </Link>
 
               <Link
-                href="/admin/invoices"
+                href="/admin/history"
                 className="flex items-center justify-between p-3.5 rounded-xl border border-slate-100 bg-slate-50/60 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 transition-all group"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center shrink-0">
-                    <Receipt className="w-4 h-4" />
+                  <div className="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center shrink-0">
+                    <HistoryIcon className="w-4 h-4" />
                   </div>
                   <div>
                     <div className="text-xs font-bold text-slate-800 group-hover:text-blue-700">
-                      Buat Tagihan (Invoice)
+                      Histori Pengiriman
                     </div>
-                    <div className="text-[11px] text-slate-500">Invoicing B2B per resi</div>
+                    <div className="text-[11px] text-slate-500">Arsip resi & foto POD</div>
                   </div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-600" />

@@ -418,8 +418,8 @@ export default function AdminHistoryPage() {
                 </div>
 
                 <div className="pt-2 border-t border-slate-200 flex items-center justify-between text-slate-600">
-                  <span>Muatan: <strong>{selectedItem.total_colli} Koli</strong> • <strong>{selectedItem.actual_weight_kg} Kg</strong></span>
-                  <span className="font-mono font-bold text-slate-900">Rp {Number(selectedItem.total_cost).toLocaleString("id-ID")}</span>
+                  <span>Total Muatan Kargo:</span>
+                  <span className="font-bold text-slate-900">{selectedItem.total_colli} Koli • {selectedItem.actual_weight_kg} Kg</span>
                 </div>
               </div>
 

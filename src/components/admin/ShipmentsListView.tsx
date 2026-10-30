@@ -198,7 +198,6 @@ export default function ShipmentsListView({ initialShipments }: ShipmentsListVie
       "Tanggal Kirim",
       "Estimasi",
       "Berat (kg)",
-      "Total Biaya",
     ];
     const rows = filteredShipments.map((s) => [
       s.resi,
@@ -210,7 +209,6 @@ export default function ShipmentsListView({ initialShipments }: ShipmentsListVie
       s.shipped_date_formatted || String(s.shipped_date).slice(0, 10),
       s.estimated_days || "-",
       s.actual_weight_kg,
-      s.total_cost,
     ]);
 
     const csvContent =

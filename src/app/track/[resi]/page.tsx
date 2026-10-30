@@ -552,7 +552,7 @@ export default function ResiTrackingDetailPage() {
                   <th className="py-2.5 px-3">Nama Barang / Deskripsi</th>
                   <th className="py-2.5 px-3 text-center">Jumlah (Qty)</th>
                   <th className="py-2.5 px-3 text-right">Berat (Kg)</th>
-                  <th className="py-2.5 px-3 text-right">Nilai Barang</th>
+                  
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-700">
@@ -563,14 +563,12 @@ export default function ResiTrackingDetailPage() {
                       <td className="py-2.5 px-3 font-medium text-slate-900">{item.item_name}</td>
                       <td className="py-2.5 px-3 text-center">{item.qty} Koli</td>
                       <td className="py-2.5 px-3 text-right">{item.weight_kg} kg</td>
-                      <td className="py-2.5 px-3 text-right font-mono">
-                        Rp {Number(item.item_value).toLocaleString("id-ID")}
-                      </td>
+
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={5} className="py-4 text-center text-slate-400">
+                    <td colSpan={4} className="py-4 text-center text-slate-400">
                       Tidak ada data muatan kargo.
                     </td>
                   </tr>
