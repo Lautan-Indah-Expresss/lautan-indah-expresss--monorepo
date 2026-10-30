@@ -51,16 +51,14 @@ function LoginForm() {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="flex justify-center items-center gap-3">
-          <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
-            <Truck className="w-7 h-7" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900">LIE Cargo</h1>
-            <p className="text-xs font-semibold tracking-wider text-blue-600 uppercase">
-              Smart Cargo Solutions
-            </p>
-          </div>
+        <div className="flex justify-center items-center">
+          <TypographyLogo
+            variant="cargo"
+            theme="light"
+            style="velocity"
+            size="lg"
+            subtitle="PT LAUTAN INDAH EXPRESS"
+          />
         </div>
         <h2 className="mt-6 text-center text-xl font-bold tracking-tight text-slate-800">
           Masuk ke Portal Operasional Admin
