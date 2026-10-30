@@ -304,7 +304,7 @@ export default function SettingsPage() {
         {currentUser && (
           <div className="text-right">
             <div className="text-xs font-bold text-slate-800">{currentUser.name}</div>
-            <div className="text-[11px] font-mono text-slate-500 uppercase">{currentUser.role}</div>
+            {/* <div className="text-[11px] font-mono text-slate-500 uppercase">{currentUser.role}</div> */}
           </div>
         )}
       </div>
