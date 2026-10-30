@@ -15,6 +15,7 @@ import {
   Car,
   UserCheck,
   History,
+  Settings,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -61,6 +62,12 @@ export default function AdminSidebar({ isOpen = true }: SidebarProps) {
         { label: "Pelanggan", href: "/admin/customers", icon: Users },
         { label: "Armada", href: "/admin/fleets", icon: Car },
         { label: "Kurir / Driver", href: "/admin/drivers", icon: UserCheck },
+      ],
+    },
+    {
+      title: "SISTEM",
+      items: [
+        { label: "Pengaturan & Keamanan", href: "/admin/settings", icon: Settings },
       ],
     },
   ];

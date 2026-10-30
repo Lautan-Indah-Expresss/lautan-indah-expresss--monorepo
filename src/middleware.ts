@@ -18,7 +18,7 @@ export async function middleware(request: NextRequest) {
     if (token) {
       try {
         const { payload } = await jwtVerify(token, JWT_SECRET);
-        if (payload && payload.role === "admin") {
+        if (payload && (payload.role === "admin" || payload.role === "spradmexp" || payload.role === "admexp")) {
           isValid = true;
         }
       } catch {

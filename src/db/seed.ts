@@ -20,11 +20,11 @@ async function main() {
 
   await db.insert(users).values([
     {
-      name: "Admin Kargo",
+      name: "Super Admin Ekspedisi",
       username: "admin",
       password_hash: adminPassword,
       phone: "081234567890",
-      role: "admin",
+      role: "spradmexp",
       is_active: true,
     },
     {

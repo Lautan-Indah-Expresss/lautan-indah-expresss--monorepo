@@ -53,7 +53,7 @@ export async function POST(request: Request) {
       role: user.role,
     };
 
-    if (user.role === "admin") {
+    if (user.role === "admin" || user.role === "spradmexp" || user.role === "admexp") {
       const token = await signAdminToken(payload);
       const maxAge = getAdminExpirationSeconds();
 
