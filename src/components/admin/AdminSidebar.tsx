@@ -2,7 +2,7 @@
 
 import { TypographyLogo } from "../TypographyLogo";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -15,6 +15,7 @@ import {
   Car,
   UserCheck,
   History,
+  Settings,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -37,6 +38,20 @@ interface MenuGroup {
 
 export default function AdminSidebar({ isOpen = true }: SidebarProps) {
   const pathname = usePathname();
+  const [role, setRole] = useState<string>("admexp");
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.user?.role) {
+          setRole(data.user.role);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const isSuperAdmin = role === "spradmexp";
 
   const menuGroups: MenuGroup[] = [
     {
@@ -52,7 +67,7 @@ export default function AdminSidebar({ isOpen = true }: SidebarProps) {
         { label: "Daftar Pengiriman", href: "/admin/shipments", icon: Package },
         { label: "Histori Pengiriman", href: "/admin/history", icon: History },
         { label: "Dispatcher Multi-Drop", href: "/admin/multidrop", icon: Layers },
-        { label: "Tracking Publik", href: "/", target:"_blank", icon: Navigation,  external: false },
+        { label: "Tracking Publik", href: "/", target: "_blank", icon: Navigation, external: false },
       ],
     },
     {
@@ -61,6 +76,16 @@ export default function AdminSidebar({ isOpen = true }: SidebarProps) {
         { label: "Pelanggan", href: "/admin/customers", icon: Users },
         { label: "Armada", href: "/admin/fleets", icon: Car },
         { label: "Kurir / Driver", href: "/admin/drivers", icon: UserCheck },
+      ],
+    },
+    {
+      title: "SISTEM",
+      items: [
+        {
+          label: isSuperAdmin ? "Manajemen User Admin" : "Manajemen Akun",
+          href: "/admin/settings",
+          icon: Settings,
+        },
       ],
     },
   ];

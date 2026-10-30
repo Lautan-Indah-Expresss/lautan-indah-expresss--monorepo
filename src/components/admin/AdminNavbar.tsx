@@ -21,6 +21,18 @@ export default function AdminNavbar({ onMenuToggle, title = "Dashboard" }: Navba
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [currentUser, setCurrentUser] = useState<{ name: string; username: string; role: string } | null>(null);
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.user) {
+          setCurrentUser(data.user);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -114,20 +126,25 @@ export default function AdminNavbar({ onMenuToggle, title = "Dashboard" }: Navba
             onClick={() => setShowUserMenu(!showUserMenu)}
             className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
           >
-            <div className="w-8 h-8 rounded-full bg-blue-100 border border-blue-200 flex items-center justify-center text-blue-700 font-semibold text-xs">
+            {/* <div className="w-8 h-8 rounded-full bg-blue-100 border border-blue-200 flex items-center justify-center text-blue-700 font-semibold text-xs">
               LIE
-            </div>
+            </div> */}
             <div className="hidden md:block text-left">
-              <div className="text-xs font-bold text-slate-800 leading-tight">Admin LIE Cargo</div>
-              <div className="text-[10px] text-slate-500 font-medium">Administrator</div>
+              <div className="text-xs font-bold text-slate-800 leading-tight">
+                {currentUser?.name || "Administrator"}
+              </div>
+              <div className="text-[10px] text-slate-500 font-medium font-mono uppercase">
+                {currentUser?.role === "spradmexp" ? "Super Admin" : "Admin Operasional"}
+              </div>
             </div>
           </button>
 
           {showUserMenu && (
             <div className="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-lg border border-slate-100 py-1.5 text-xs text-slate-700 z-50 animate-in fade-in slide-in-from-top-1">
               <div className="px-3 py-2 border-b border-slate-100">
-                <p className="font-bold text-slate-900">Admin LIE Cargo</p>
-                <p className="text-[10px] text-slate-500">admin@lie-cargo.id</p>
+                <p className="font-bold text-slate-900">{currentUser?.name || "Administrator"}</p>
+                <p className="text-[10px] text-slate-500 font-mono">@{currentUser?.username || "admin"}</p>
+                {/* <p className="text-[10px] text-slate-500">admin@lie-cargo.id</p> */}
               </div>
               {/* <div className="py-1">
                 <div className="flex items-center gap-2 px-3 py-2 text-slate-600 hover:bg-slate-50 cursor-pointer">

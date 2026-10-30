@@ -13,6 +13,21 @@ async function main() {
     fs.mkdirSync(uploadsDir, { recursive: true });
   }
 
+  // 0. Auto-Migrate Role Enum jika database lama masih menyimpan enum 'admin'
+  try {
+    await pool.execute(
+      "ALTER TABLE users MODIFY COLUMN role ENUM('admin', 'spradmexp', 'admexp', 'driver') NOT NULL DEFAULT 'driver'"
+    );
+    await pool.execute(
+      "UPDATE users SET role = 'spradmexp' WHERE role = 'admin' OR username = 'admin'"
+    );
+    await pool.execute(
+      "ALTER TABLE users MODIFY COLUMN role ENUM('spradmexp', 'admexp', 'driver') NOT NULL DEFAULT 'driver'"
+    );
+  } catch (_) {
+    // Tabel belum dibuat atau enum sudah sesuai, lanjut
+  }
+
   // 1. Seed Users
   console.log("Inserting users...");
   const adminPassword = hashPassword("admin123");
@@ -20,11 +35,11 @@ async function main() {
 
   await db.insert(users).values([
     {
-      name: "Admin Kargo",
+      name: "Super Admin Ekspedisi",
       username: "admin",
       password_hash: adminPassword,
       phone: "081234567890",
-      role: "admin",
+      role: "spradmexp",
       is_active: true,
     },
     {
