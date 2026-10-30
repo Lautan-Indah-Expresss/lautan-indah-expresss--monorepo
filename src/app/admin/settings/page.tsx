@@ -31,7 +31,7 @@ const DEFAULT_ADMIN_PASSWORD = "Adminlautanindahexp";
 export default function SettingsPage() {
   const [currentUser, setCurrentUser] = useState<AdminUser | null>(null);
   const [loadingMe, setLoadingMe] = useState(true);
-  const [activeTab, setActiveTab] = useState<"password" | "users">("password");
+  const [activeTab, setActiveTab] = useState<"password" | "users">("users");
 
   // Form Change Password (Akun Sendiri)
   const [oldPassword, setOldPassword] = useState("");
@@ -72,6 +72,9 @@ export default function SettingsPage() {
       const data = await res.json();
       if (data.success && data.user) {
         setCurrentUser(data.user);
+        if (data.user.role !== "spradmexp") {
+          setActiveTab("password");
+        }
       }
     } catch (e) {
       console.error(e);
@@ -308,31 +311,23 @@ export default function SettingsPage() {
 
       {/* Tabs */}
       <div className="flex border-b border-slate-200 gap-2">
-        <button
-          type="button"
-          onClick={() => setActiveTab("password")}
-          className={`pb-3 px-4 text-xs font-bold transition-all border-b-2 flex items-center gap-2 ${
-            activeTab === "password"
-              ? "border-blue-600 text-blue-600"
-              : "border-transparent text-slate-500 hover:text-slate-800"
-          }`}
-        >
-          <KeyRound className="w-4 h-4" />
-          <span>Ubah Kata Sandi Saya</span>
-        </button>
-
-        {isSuperAdmin && (
+        {isSuperAdmin ? (
           <button
             type="button"
             onClick={() => setActiveTab("users")}
-            className={`pb-3 px-4 text-xs font-bold transition-all border-b-2 flex items-center gap-2 ${
-              activeTab === "users"
-                ? "border-blue-600 text-blue-600"
-                : "border-transparent text-slate-500 hover:text-slate-800"
-            }`}
+            className="pb-3 px-4 text-xs font-bold transition-all border-b-2 border-blue-600 text-blue-600 flex items-center gap-2"
           >
             <Users className="w-4 h-4" />
             <span>Manajemen User Admin ({adminList.length || "•"})</span>
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setActiveTab("password")}
+            className="pb-3 px-4 text-xs font-bold transition-all border-b-2 border-blue-600 text-blue-600 flex items-center gap-2"
+          >
+            <KeyRound className="w-4 h-4" />
+            <span>Ubah Kata Sandi Saya</span>
           </button>
         )}
       </div>
