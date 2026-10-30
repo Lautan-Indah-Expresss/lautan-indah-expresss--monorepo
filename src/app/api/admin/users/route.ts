@@ -3,7 +3,9 @@ import { cookies } from "next/headers";
 import { verifyToken, hashPassword } from "@/lib/auth";
 import { db } from "@/db";
 import { users } from "@/db/schema";
-import { eq, or, desc } from "drizzle-orm";
+import { eq, or, desc, ne, and } from "drizzle-orm";
+
+const DEFAULT_ADMIN_PASSWORD = "Adminlautanindahexp";
 
 // 1. GET: Ambil daftar seluruh user admin (Khusus spradmexp)
 export async function GET() {
@@ -28,7 +30,6 @@ export async function GET() {
         id: users.id,
         name: users.name,
         username: users.username,
-        phone: users.phone,
         role: users.role,
         is_active: users.is_active,
         created_at: users.created_at,
@@ -68,21 +69,17 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { name, username, password, phone, role } = body;
+    const { name, username, password, role } = body;
 
-    if (!name || !username || !password || !phone) {
+    if (!name || !username) {
       return NextResponse.json(
-        { error: "Nama, username, kata sandi, dan nomor telepon wajib diisi." },
+        { error: "Nama dan username wajib diisi." },
         { status: 400 }
       );
     }
 
-    if (password.length < 6) {
-      return NextResponse.json(
-        { error: "Kata sandi minimal 6 karakter." },
-        { status: 400 }
-      );
-    }
+    // Gunakan password custom atau fallback ke default: Adminlautanindahexp
+    const finalPassword = password && password.trim().length >= 6 ? password.trim() : DEFAULT_ADMIN_PASSWORD;
 
     // Role yang diizinkan dibuat: admexp atau spradmexp
     const targetRole = role === "spradmexp" ? "spradmexp" : "admexp";
@@ -101,20 +98,20 @@ export async function POST(request: Request) {
       );
     }
 
-    const password_hash = hashPassword(password);
+    const password_hash = hashPassword(finalPassword);
 
     await db.insert(users).values({
       name: String(name).trim(),
       username: String(username).trim(),
       password_hash,
-      phone: String(phone).trim(),
+      phone: "-", // Default no phone needed for admin
       role: targetRole,
       is_active: true,
     });
 
     return NextResponse.json({
       success: true,
-      message: `Akun admin (${targetRole}) berhasil dibuat.`,
+      message: `Akun admin (${targetRole}) berhasil dibuat dengan password: ${finalPassword}`,
     });
   } catch (error) {
     console.error("POST /api/admin/users error:", error);
@@ -122,7 +119,7 @@ export async function POST(request: Request) {
   }
 }
 
-// 3. PATCH: Ubah status aktif atau reset password user (Khusus spradmexp)
+// 3. PATCH: Update User (Nama, Username, Password baru, Role, Status Aktif)
 export async function PATCH(request: Request) {
   try {
     const cookieStore = await cookies();
@@ -141,7 +138,7 @@ export async function PATCH(request: Request) {
     }
 
     const body = await request.json();
-    const { userId, newPassword, isActive } = body;
+    const { userId, name, username, newPassword, role, isActive } = body;
 
     if (!userId) {
       return NextResponse.json({ error: "User ID wajib ditentukan" }, { status: 400 });
@@ -159,15 +156,47 @@ export async function PATCH(request: Request) {
 
     const updates: Record<string, any> = {};
 
-    if (newPassword) {
-      if (newPassword.length < 6) {
-        return NextResponse.json({ error: "Kata sandi minimal 6 karakter" }, { status: 400 });
-      }
-      updates.password_hash = hashPassword(newPassword);
+    // Update Nama
+    if (name && name.trim()) {
+      updates.name = name.trim();
     }
 
+    // Update Username
+    if (username && username.trim()) {
+      const cleanUsername = username.trim().toLowerCase();
+      if (cleanUsername !== targetUser[0].username) {
+        // Cek apakah username sudah dipakai orang lain
+        const duplicate = await db
+          .select({ id: users.id })
+          .from(users)
+          .where(and(eq(users.username, cleanUsername), ne(users.id, Number(userId))))
+          .limit(1);
+
+        if (duplicate.length > 0) {
+          return NextResponse.json(
+            { error: `Username '${cleanUsername}' sudah dipakai oleh akun lain.` },
+            { status: 400 }
+          );
+        }
+        updates.username = cleanUsername;
+      }
+    }
+
+    // Reset Password oleh Super Admin
+    if (newPassword && newPassword.trim()) {
+      if (newPassword.trim().length < 6) {
+        return NextResponse.json({ error: "Kata sandi minimal 6 karakter" }, { status: 400 });
+      }
+      updates.password_hash = hashPassword(newPassword.trim());
+    }
+
+    // Update Role
+    if (role && (role === "spradmexp" || role === "admexp")) {
+      updates.role = role;
+    }
+
+    // Toggle Aktif/Nonaktif
     if (typeof isActive === "boolean") {
-      // Mencegah super admin menonaktifkan akunnya sendiri jika sedang login
       if (targetUser[0].id === payload.userId && !isActive) {
         return NextResponse.json(
           { error: "Anda tidak dapat menonaktifkan akun Super Admin Anda sendiri!" },
