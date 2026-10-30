@@ -1,5 +1,7 @@
 "use client";
 
+import { TypographyLogo } from "@/components/TypographyLogo";
+
 import React, { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Truck, ShieldCheck, Lock, User, ArrowRight, AlertCircle, Loader2 } from "lucide-react";

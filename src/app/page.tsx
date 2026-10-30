@@ -1,5 +1,7 @@
 "use client";
 
+import { TypographyLogo } from "@/components/TypographyLogo";
+
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -133,18 +135,14 @@ export default function HomePage() {
       {/* Top Navbar */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">
-              LIE
-            </div>
-            <div>
-              <span className="font-extrabold text-slate-900 tracking-tight text-lg">
-                LIE Cargo
-              </span>
-              <span className="hidden sm:inline-block text-xs bg-blue-50 text-blue-700 font-semibold px-2 py-0.5 rounded-full ml-2">
-                B2B Express
-              </span>
-            </div>
+          <Link href="/" className="flex items-center">
+            <TypographyLogo
+              variant="cargo"
+              theme="light"
+              style="velocity"
+              size="md"
+              subtitle="PT LAUTAN INDAH EXPRESS"
+            />
           </Link>
 
           <div className="flex items-center gap-3">
