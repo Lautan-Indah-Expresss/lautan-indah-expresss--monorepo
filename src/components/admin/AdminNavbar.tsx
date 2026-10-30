@@ -98,14 +98,14 @@ export default function AdminNavbar({ onMenuToggle, title = "Dashboard" }: Navba
       {/* Right Actions & User Profile */}
       <div className="flex items-center gap-3 shrink-0">
         {/* Notification Bell */}
-        <button
+        {/* <button
           type="button"
           className="relative p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
           title="Notifikasi"
         >
           <Bell className="w-4 h-4" />
           <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-blue-600 rounded-full ring-2 ring-white"></span>
-        </button>
+        </button> */}
 
         {/* User Dropdown */}
         <div className="relative">
@@ -129,7 +129,7 @@ export default function AdminNavbar({ onMenuToggle, title = "Dashboard" }: Navba
                 <p className="font-bold text-slate-900">Admin LIE Cargo</p>
                 <p className="text-[10px] text-slate-500">admin@lie-cargo.id</p>
               </div>
-              <div className="py-1">
+              {/* <div className="py-1">
                 <div className="flex items-center gap-2 px-3 py-2 text-slate-600 hover:bg-slate-50 cursor-pointer">
                   <User className="w-3.5 h-3.5 text-slate-400" />
                   <span>Profil Akun</span>
@@ -138,7 +138,7 @@ export default function AdminNavbar({ onMenuToggle, title = "Dashboard" }: Navba
                   <Shield className="w-3.5 h-3.5 text-slate-400" />
                   <span>Hak Akses & Role</span>
                 </div>
-              </div>
+              </div> */}
               <div className="border-t border-slate-100 pt-1">
                 <button
                   type="button"
